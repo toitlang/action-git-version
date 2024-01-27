@@ -12,14 +12,23 @@ outputs:
 runs:
   using: "composite"
   steps:
-    - name: Compute Git version
+    - name: Compute Git version - Windows
+      if: ${{ runner.os }} == 'Windows'
+      shell: powershell
+      run: |
+        $VERSION = cmake -DPRINT_VERSION=1 -P ${{ github.action_path }}/gitversion.cmake
+        Add-Content -Path $env:GITHUB_ENV -Value "GITVERSION=$VERSION"
+
+
+    - name: Compute Git version - Posix
+      if: ${{ runner.os }} != 'Windows'
+      shell: bash
+      run: |
+        VERSION=$(cmake -DPRINT_VERSION=1 -P ${{ github.action_path }}/gitversion.cmake)
+        echo "GITVERSION=$VERSION" >> $GITHUB_ENV
+
+    - name: Output version
       id: gitversion
       shell: bash
       run: |
-        if [[ ${{ runner.os }} == 'Windows' ]]; then
-          TOOL_PATH=$(cygpath -w '${{ github.action_path }}')
-        else
-          TOOL_PATH=${{ github.action_path }}
-        fi
-        VERSION=$(cmake -DPRINT_VERSION=1 -P $TOOL_PATH/gitversion.cmake)
-        echo "version=$VERSION" >> $GITHUB_OUTPUT
+        echo "::set-output name=version::$GITVERSION"
