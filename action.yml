@@ -30,4 +30,4 @@ runs:
       id: gitversion
       shell: bash
       run: |
-        echo "::set-output name=version::$GITVERSION"
+        echo "version=$GITVERSION" >> $GITHUB_OUTPUT
