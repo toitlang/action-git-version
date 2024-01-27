@@ -1,0 +1,20 @@
+name: "Git Version"
+description: "A GitHub Action to create a semantic version from Git tags/branches."
+branding:
+  icon: "git-merge"
+  color: "yellow"
+
+outputs:
+  version:
+    description: "The computed version."
+    value: ${{ steps.gitversion.outputs.version }}
+
+runs:
+  using: "composite"
+  steps:
+    - name: Compute Git version
+      id: gitversion
+      shell: bash
+      run: |
+        VERSION=$(cmake -DPRINT_VERSION=1 -P gitversion.cmake)
+        echo "version=$VERSION" >> $GITHUB_OUTPUT
