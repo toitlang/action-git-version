@@ -17,7 +17,7 @@ runs:
       shell: bash
       run: |
         if [[ ${{ runner.os }} == 'Windows' ]]; then
-          TOOL_PATH=$(cygpath -w ${{ github.action_path }})
+          TOOL_PATH=$(cygpath -w '${{ github.action_path }}')
         else
           TOOL_PATH=${{ github.action_path }}
         fi
