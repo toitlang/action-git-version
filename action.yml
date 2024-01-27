@@ -16,5 +16,10 @@ runs:
       id: gitversion
       shell: bash
       run: |
-        VERSION=$(cmake -DPRINT_VERSION=1 -P ${{ github.action_path }}/gitversion.cmake)
+        if [[ ${{ runner.os }} == 'Windows' ]]; then
+          TOOL_PATH=$(cygpath -w ${{ github.action_path }})
+        else
+          TOOL_PATH=${{ github.action_path }}
+        fi
+        VERSION=$(cmake -DPRINT_VERSION=1 -P $TOOL_PATH/gitversion.cmake)
         echo "version=$VERSION" >> $GITHUB_OUTPUT
