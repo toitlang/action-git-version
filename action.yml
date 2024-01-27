@@ -16,5 +16,5 @@ runs:
       id: gitversion
       shell: bash
       run: |
-        VERSION=$(cmake -DPRINT_VERSION=1 -P gitversion.cmake)
+        VERSION=$(cmake -DPRINT_VERSION=1 -P ${{ github.action_path }}/gitversion.cmake)
         echo "version=$VERSION" >> $GITHUB_OUTPUT
