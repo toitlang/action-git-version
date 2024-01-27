@@ -13,7 +13,7 @@ runs:
   using: "composite"
   steps:
     - name: Compute Git version - Windows
-      if: ${{ runner.os }} == 'Windows'
+      if: runner.os == 'Windows'
       shell: powershell
       run: |
         $VERSION = cmake -DPRINT_VERSION=1 -P ${{ github.action_path }}/gitversion.cmake
@@ -21,7 +21,7 @@ runs:
 
 
     - name: Compute Git version - Posix
-      if: ${{ runner.os }} != 'Windows'
+      if: runner.os != 'Windows'
       shell: bash
       run: |
         VERSION=$(cmake -DPRINT_VERSION=1 -P ${{ github.action_path }}/gitversion.cmake)
