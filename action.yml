@@ -19,7 +19,6 @@ runs:
         $VERSION = cmake -DPRINT_VERSION=1 -P ${{ github.action_path }}/gitversion.cmake
         Add-Content -Path $env:GITHUB_ENV -Value "GITVERSION=$VERSION"
 
-
     - name: Compute Git version - Posix
       if: runner.os != 'Windows'
       shell: bash
