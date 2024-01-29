@@ -4,6 +4,12 @@ branding:
   icon: "git-merge"
   color: "yellow"
 
+inputs:
+  path:
+    description: "The path to the Git repository."
+    required: false
+    default: ${{ github.workspace }}
+
 outputs:
   version:
     description: "The computed version."
@@ -23,6 +29,7 @@ runs:
       if: runner.os != 'Windows'
       shell: bash
       run: |
+        cd ${{ inputs.path }}
         VERSION=$(cmake -DPRINT_VERSION=1 -P ${{ github.action_path }}/gitversion.cmake)
         echo "GITVERSION=$VERSION" >> $GITHUB_ENV
 

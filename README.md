@@ -21,3 +21,8 @@ steps:
   run: |
     echo ${{ steps.gitversion.outputs.version }}
 ```
+
+## Arguments
+
+The action takes the following arguments:
+- `path`: The path to the project root. Defaults to the GitHub workspace.
