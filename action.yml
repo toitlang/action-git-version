@@ -1,0 +1,33 @@
+name: "Git Version"
+description: "A GitHub Action to create a semantic version from Git tags/branches."
+branding:
+  icon: "git-merge"
+  color: "yellow"
+
+outputs:
+  version:
+    description: "The computed version."
+    value: ${{ steps.gitversion.outputs.version }}
+
+runs:
+  using: "composite"
+  steps:
+    - name: Compute Git version - Windows
+      if: runner.os == 'Windows'
+      shell: powershell
+      run: |
+        $VERSION = cmake -DPRINT_VERSION=1 -P ${{ github.action_path }}/gitversion.cmake
+        Add-Content -Path $env:GITHUB_ENV -Value "GITVERSION=$VERSION"
+
+    - name: Compute Git version - Posix
+      if: runner.os != 'Windows'
+      shell: bash
+      run: |
+        VERSION=$(cmake -DPRINT_VERSION=1 -P ${{ github.action_path }}/gitversion.cmake)
+        echo "GITVERSION=$VERSION" >> $GITHUB_ENV
+
+    - name: Output version
+      id: gitversion
+      shell: bash
+      run: |
+        echo "version=$GITVERSION" >> $GITHUB_OUTPUT
