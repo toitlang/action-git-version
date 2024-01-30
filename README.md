@@ -12,7 +12,7 @@ See [action.yml](action.yml) for a complete list of options and outputs.
 steps:
 - uses: actions/checkout@v4
 
-- name: Run GitVersion
+- name: Run Git Version
   id: gitversion
   uses: toitlang/action-git-version@v1.0.0
 

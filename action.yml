@@ -1,5 +1,5 @@
-name: "Git Version"
-description: "A GitHub Action to create a semantic version from Git tags/branches."
+name: "Git Version Cmake"
+description: "A GitHub Action to create a semantic version from Git tags/branches using only cmake and Git."
 branding:
   icon: "git-merge"
   color: "yellow"
