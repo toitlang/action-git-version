@@ -14,7 +14,8 @@ steps:
   # This action needs access to the history and tags.
   # You can also limit the depth to a smaller number and run 'git fetch --tags',
   # but the generated version might not be accurate.
-  depth: 0
+  with:
+    fetch-depth: 0
 
 - name: Run Git Version
   id: gitversion
