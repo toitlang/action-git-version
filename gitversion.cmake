@@ -73,6 +73,17 @@ function(compute_git_version VERSION)
     endif()
   endif()
 
+  backtick(CURRENT_BRANCH ${GIT_EXECUTABLE} rev-parse --abbrev-ref HEAD)
+  if ("${CURRENT_BRANCH}" STREQUAL master OR "${CURRENT_BRANCH}" STREQUAL main OR "${CURRENT_BRANCH}" STREQUAL HEAD)
+    # Master branch: v0.5.0-pre.17+9a1fbdb29
+    set(BRANCH_ID "")
+  else()
+    # Other branch: v0.5.0-pre.17+branch-name.9a1fbd29
+    # Semver requires the dot-separated identifiers to comprise only alphanumerics and hyphens.
+    string(REGEX REPLACE "[^.0-9A-Za-z-]" "-" SANITIZED_BRANCH ${CURRENT_BRANCH})
+    set(BRANCH_ID "${SANITIZED_BRANCH}.")
+  endif()
+
   # Find all release branches.
   backtick(ALL_BRANCHES ${GIT_EXECUTABLE} branch -a "--format=%(refname:short)")
   # Split lines.
@@ -87,7 +98,7 @@ function(compute_git_version VERSION)
   if (${BRANCHES_LENGTH} EQUAL 0)
     if ("${LATEST_VERSION_TAG}" STREQUAL "")
       backtick(COMMIT_COUNT ${GIT_EXECUTABLE} rev-list --count HEAD)
-      set(${VERSION} "${DEFAULT_PRE_VERSION}-pre.${COMMIT_COUNT}" PARENT_SCOPE)
+      set(${VERSION} "${DEFAULT_PRE_VERSION}-pre.${COMMIT_COUNT}+${BRANCH_ID}${CURRENT_COMMIT_SHORT}" PARENT_SCOPE)
       return()
     endif()
   endif()
@@ -197,7 +208,7 @@ function(compute_git_version VERSION)
         # Count the distance to the last tag.
         backtick(VERSION_TAG_COMMIT ${GIT_EXECUTABLE} rev-parse "${LATEST_VERSION_TAG}^{}")
         backtick(CURRENT_COMMIT_NO ${GIT_EXECUTABLE} rev-list --count HEAD "^${VERSION_TAG_COMMIT}")
-        set(${VERSION} "v${tag_major}.${tag_minor}.${patch}-pre.${CURRENT_COMMIT_NO}+${CURRENT_COMMIT_SHORT}" PARENT_SCOPE)
+        set(${VERSION} "v${tag_major}.${tag_minor}.${patch}-pre.${CURRENT_COMMIT_NO}+${BRANCH_ID}${CURRENT_COMMIT_SHORT}" PARENT_SCOPE)
         return()
       endif()
 
@@ -216,7 +227,7 @@ function(compute_git_version VERSION)
         list(GET RELEASE_BRANCHES ${next_index} PREVIOUS_RELEASE_BRANCH)
         commits_since_common_ancestor(${PREVIOUS_RELEASE_BRANCH} COMMITS_SINCE_LAST_RELEASE)
       endif()
-      set(${VERSION} "v${branch_major}.${branch_minor}.0-pre.${COMMITS_SINCE_LAST_RELEASE}+${CURRENT_COMMIT_SHORT}" PARENT_SCOPE)
+      set(${VERSION} "v${branch_major}.${branch_minor}.0-pre.${COMMITS_SINCE_LAST_RELEASE}+${BRANCH_ID}${CURRENT_COMMIT_SHORT}" PARENT_SCOPE)
       return()
     endforeach()
   endif()
@@ -264,17 +275,6 @@ function(compute_git_version VERSION)
   endif()
 
   # Add the branch name to the version.
-
-  backtick(CURRENT_BRANCH ${GIT_EXECUTABLE} rev-parse --abbrev-ref HEAD)
-  if ("${CURRENT_BRANCH}" STREQUAL master OR "${CURRENT_BRANCH}" STREQUAL main OR "${CURRENT_BRANCH}" STREQUAL HEAD)
-    # Master branch: v0.5.0-pre.17+9a1fbdb29
-    set(BRANCH_ID "")
-  else()
-    # Other branch: v0.5.0-pre.17+branch-name.9a1fbd29
-    # Semver requires the dot-separated identifiers to comprise only alphanumerics and hyphens.
-    string(REGEX REPLACE "[^.0-9A-Za-z-]" "-" SANITIZED_BRANCH ${CURRENT_BRANCH})
-    set(BRANCH_ID "${SANITIZED_BRANCH}.")
-  endif()
 
   set(${VERSION} "${RESULT_PREFIX}+${BRANCH_ID}${CURRENT_COMMIT_SHORT}" PARENT_SCOPE)
 endfunction()
