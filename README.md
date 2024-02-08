@@ -21,7 +21,7 @@ steps:
 
 - name: Run Git Version
   id: gitversion
-  uses: toitlang/action-git-version@v1.0.0
+  uses: toitlang/action-git-version@v1.1.0
 
 - name: Use the version
   shell: bash
